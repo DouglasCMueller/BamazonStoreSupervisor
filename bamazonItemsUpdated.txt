@@ -1,0 +1,68 @@
+INSERT INTO products (product_name, department_name, price, stock_quantity)
+
+VALUES
+    (
+        'water bottle',
+        'Sports and Outdoors',
+        14,
+        30
+    ),
+    (
+        'basketball',
+        'Sports and Outdoors',
+        32,
+        29
+    ),
+    (
+        'vegeteble chopper',
+        'Home and Kitchen',
+        17,
+        28'
+    ),
+    (
+        'trash can',
+        'Home and Kitchen',
+        29,
+        27
+    ),
+    (
+        'monopoly game',
+        'Toys and Games',
+        15,
+        26
+    ),
+    (
+        'toy gun',
+        'Toys and Games',
+        7,
+        25
+    ),
+    (
+        'desk organizer',
+        'Office Products',
+        18,
+        24
+    ),
+
+    (
+        'scissors',
+        'Office Products',
+        6,
+        23
+    ),
+
+    (
+        'baby thermometer',
+        'Baby',
+        12,
+        22
+    ),
+
+    (
+        'baby wipes',
+        'Baby',
+        9,
+        21
+    );
+
+    
