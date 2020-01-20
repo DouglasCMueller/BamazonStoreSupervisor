@@ -24,12 +24,13 @@ var displayProducts = function () {
         console.log(clc.red(" Current Inventory at Bamazon"));
         console.log(" ----------------------------------");
         var displayTable = new Table({
-            head: ["Item ID", "Product Name", "Department Name", "Price", "Stock Quantity"],
-            colWidths: [10, 25, 25, 10, 20]
+            head: ["Item ID", "Product Name", "Department Name", "Price", "Stock Quantity", "Product Sales"],
+            colWidths: [10, 25, 25, 10, 20, 25]
         });
         for (var i = 0; i < res.length; i++) {
             displayTable.push(
-                [res[i].item_id, res[i].product_name, res[i].department_name, res[i].price, res[i].stock_quantity]
+                [res[i].item_id, res[i].product_name,
+                res[i].department_name, res[i].price, res[i].stock_quantity, res[i].product_sales]
             );
         }
         console.log(displayTable.toString());
@@ -54,26 +55,61 @@ function customerPurchase(res) {
 
             var userItemId = answers.itemId;
             var userQuantity = answers.quantity;
-            var query = "Select stock_quantity,price,product_name FROM products WHERE item_id = " + userItemId;
+            var query = "Select stock_quantity,price,product_name,product_sales,department_name FROM products WHERE item_id = " + userItemId;
             connection.query(query, function (err, res) {
                 if (err) throw err;
                 else {
+                    console.log(res)
                         if (res[0].stock_quantity - userQuantity > 0) {
                         var quantityAtItemId = res[0].stock_quantity;
                         updatedStockQuantity = quantityAtItemId - userQuantity;
-           
+                        var totalPurchaseValue = userQuantity * res[0].price;
+                        var totalProductSalesByProduct = res[0].product_sales
+                        var newTotalProductSalesByProductAfterPurchase = totalProductSalesByProduct + totalPurchaseValue;
+                       
+                       var currentItemDepartmentName = res[0].department_name
+                       console.log(currentItemDepartmentName)
                         console.log(clc.magenta("You have purchased " + userQuantity + " " + res[0].product_name +
                             "\nfor a total cost of: $" + res[0].price * userQuantity));
-
-
-
                         var query = "UPDATE products SET stock_quantity = " +
                             updatedStockQuantity + " WHERE item_id = " + answers.itemId;
                         connection.query(query, function (err, res) {
                             if (err) throw err;
                             else {
                                 console.log("Product quantity updated");
-                                connection.end();
+                                var query = "UPDATE products SET product_sales = " +
+                                    newTotalProductSalesByProductAfterPurchase + " WHERE item_id = " + answers.itemId;
+                                connection.query(query, function (err, res) {
+                                    if (err) throw err;
+                                    else {
+                                        console.log("Product sales updated");
+                                        console.log(currentItemDepartmentName)
+                                    var query = "SELECT product_sales FROM departments WHERE department_name = " +
+                                    "'" + currentItemDepartmentName + "'";
+                                    connection.query(query, function (err,result){
+                                    if(err) throw err;
+                                    else{
+                                        console.log(result)
+                                        console.log(result[0].product_sales)
+                                       
+                                        var newDepartmentProductSales = parseInt(result[0].product_sales) + parseInt(totalPurchaseValue);
+                                        console.log(newDepartmentProductSales)
+                                        var query = "UPDATE departments SET product_sales = "+ "'" + newDepartmentProductSales + "'" +
+                                        "WHERE department_name= " + "'" + currentItemDepartmentName + "'";
+                                        
+                                        connection.query(query, function(err,results){
+                                            if(err) throw err;
+                                            else{
+console.log(results);
+console.log("Department product sales updated");
+
+                                            }
+                                        })
+                                    }
+                                }) 
+                                
+                                    }
+                                });
                             }
                         });
                     }
@@ -81,8 +117,8 @@ function customerPurchase(res) {
 
                         console.log(clc.red("There is not enough stock inventory to fulfill your order."));
                         console.log(clc.red("Please try to order again."));
-
                         customerPurchase();
+
                     }
                 }
             });
