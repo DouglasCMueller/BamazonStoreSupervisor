@@ -15,7 +15,7 @@ connection.connect(function (err) {
     console.log("connected as id " + connection.threadId);
     supervisorChoices();
 });
-function supervisorChoices(){
+function supervisorChoices() {
     inquirer.prompt({
         type: "list",
         name: "supervisorChoice",
@@ -24,7 +24,7 @@ function supervisorChoices(){
 
     })
         .then(function (answer) {
-console.log(answer)
+            console.log(answer)
             switch (answer.supervisorChoice) {
                 case "View Products Sales by Department":
                     supervisorViewSalesByDepartment();
@@ -37,7 +37,7 @@ console.log(answer)
             }
         })
 }
-function supervisorViewSalesByDepartment(){
+function supervisorViewSalesByDepartment() {
     var query = "Select * FROM departments";
     connection.query(query, function (err, res) {
         if (err) throw err;
@@ -54,9 +54,46 @@ function supervisorViewSalesByDepartment(){
             );
         }
         console.log(displayTable.toString());
-      connection.end();
+        connection.end();
     });
+}
+function supervisorCreateNewDepartment(){
+    console.clear();
+    inquirer.prompt([
+        {
+            type: "input",
+            name: "department_name",
+            message: "Please provide the new department name: ",
+        },
+        {
+            type: "input",
+            name: "over_head_costs",
+            message: "Please provide the new department's overhead costs: ",
+        }
+    ])
+        .then(function (answers) {
+            console.log(answers)
 
+            connection.query(
+                "INSERT INTO departments SET ?",
+                {
+                    department_id: 0,
+                    department_name: answers.department_name,
+                    over_head_costs: answers.over_head_costs,
+                    product_sales: 0,
+                    total_profit: 0
+                    
+                
+                },
+                function (err) {
+                    if (err) throw err;
+                    console.log("Your department was added successfully.");
+                    connection.end();
+
+                }
+
+            );
+        })
 
 
 }

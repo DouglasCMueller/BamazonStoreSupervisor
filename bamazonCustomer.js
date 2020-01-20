@@ -102,7 +102,7 @@ function customerPurchase(res) {
                                             else{
 console.log(results);
 console.log("Department product sales updated");
-
+connection.end();
                                             }
                                         })
                                     }

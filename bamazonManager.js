@@ -162,7 +162,9 @@ function managerAddNewProduct() {
                     product_name: answers.product_name,
                     department_name: answers.department_name,
                     price: answers.price,
-                    stock_quantity: answers.stock_quantity
+                    stock_quantity: answers.stock_quantity,
+                    product_sales: 0
+                
                 },
                 function (err) {
                     if (err) throw err;
